@@ -12,6 +12,13 @@ const EMPTY = {
 };
 
 export default function Admin() {
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => sessionStorage.getItem("adminAuthToken") === "true"
+  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -25,6 +32,17 @@ export default function Admin() {
   const [flash, setFlash] = useState("");
 
   const [filter, setFilter] = useState("");
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (email === "admin@gmail.com" && password === "Nepal@123") {
+      setIsLoggedIn(true);
+      sessionStorage.setItem("adminAuthToken", "true");
+      setLoginError("");
+    } else {
+      setLoginError("Invalid email or password");
+    }
+  };
 
   const loadAll = async () => {
     setLoading(true);
@@ -137,16 +155,48 @@ export default function Admin() {
     );
   }, [products, filter]);
 
+  if (!isLoggedIn) {
+    return (
+      <div className="admin">
+        <section className="admin-form-card" style={{ maxWidth: "400px", margin: "40px auto" }}>
+          <div className="admin-form-head">
+            <h2>Admin Login</h2>
+          </div>
+          {loginError && <div className="state error">{loginError}</div>}
+          <form className="product-form" onSubmit={handleLogin}>
+            <label>
+              Email
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="admin@gmail.com" />
+            </label>
+            <label>
+              Password
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" />
+            </label>
+            <div className="form-actions wide">
+              <button type="submit" className="primary">Login</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="admin">
       <section className="admin-form-card">
         <div className="admin-form-head">
           <h2>{editingId ? `Edit product #${editingId}` : "Add a new product"}</h2>
-          {editingId && (
-            <button className="link-btn" onClick={cancelEdit}>
-              ← Cancel editing
-            </button>
-          )}
+          <div>
+            {editingId ? (
+              <button className="link-btn" onClick={cancelEdit}>
+                ← Cancel editing
+              </button>
+            ) : (
+              <button className="link-btn" onClick={() => { setIsLoggedIn(false); sessionStorage.removeItem("adminAuthToken"); }}>
+                Logout
+              </button>
+            )}
+          </div>
         </div>
 
         {flash && <div className="banner success">{flash}</div>}
@@ -351,3 +401,4 @@ export default function Admin() {
     </div>
   );
 }
+

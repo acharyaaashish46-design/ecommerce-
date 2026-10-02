@@ -11,11 +11,21 @@ A small but complete e-commerce storefront:
 # 1. Install everything (root + server + client)
 npm install && npm run install:all
 
-# 2. Run both backend and frontend together
+# 2. Run both backend and frontend together (prints greeting + URLs)
 npm run dev
 ```
 
-Then open **http://localhost:5173**
+You'll see:
+
+```
+  Aashish welcome
+
+  Storefront  ->  http://localhost:5173
+  Admin panel ->  http://localhost:5173/admin
+  REST API    ->  http://localhost:5000/api/health
+```
+
+Then open **http://localhost:5173** (Ctrl+C stops both)
 
 Or run them separately in two terminals:
 
